@@ -14,3 +14,15 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+
+Route::group(['prefix' => 'admin'], function () {
+    Route::get('/','Admin\AdminController@admin')->name('admin');
+    Route::resource('article', Admin\ArticlesController::class);
+    Route::resource('teams', Admin\TeamsController::class);
+
+});
