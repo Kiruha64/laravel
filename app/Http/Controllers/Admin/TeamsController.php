@@ -3,18 +3,25 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Team;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 
 class TeamsController extends Controller
 {
     //
 
+
     public function index()
     {
-        $teams = Team::all();
+        $user_id = Auth::id();
+        $teams = Team::all()->where('owner_id' ,$user_id);
 //        dd($articles);
         return view('admin.teams.index', compact('teams'));
+
 
     }
 
@@ -36,9 +43,12 @@ class TeamsController extends Controller
      */
     public function store(Request $request)
     {
-        $article = New Team();
-        $article->name = $request->name;
-        $article->save();
+        $user_id = Auth::id();
+
+        $team = New Team();
+        $team->name = $request->name;
+        $team->owner_id = $user_id;
+        $team->save();
         return redirect(route('teams.index'));
     }
 
@@ -48,7 +58,7 @@ class TeamsController extends Controller
      * @param  \App\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function show(Article $article)
+    public function show(Team $team)
     {
 
     }
@@ -59,10 +69,10 @@ class TeamsController extends Controller
      * @param  \App\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function edit(Article $article)
+    public function edit(Team $team)
     {
-        return view('admin.articles.edit',[
-            'article' => $article
+        return view('admin.teams.edit',[
+            'team' => $team
         ]);
     }
 
@@ -73,10 +83,10 @@ class TeamsController extends Controller
      * @param  \App\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Article $article)
+    public function update(Request $request, Team $team)
     {
-        $article->code = $request->code;
-        $article->save();
+        $team->name = $request->name;
+        $team->save();
         return redirect()->back();
     }
 
@@ -86,9 +96,64 @@ class TeamsController extends Controller
      * @param  \App\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Article $article)
+    public function destroy(Team $team)
     {
-        $article->delete();
+        $team->delete();
         return redirect()->back();
+    }
+
+
+    public function members(Team $team, $id){
+//        $users = DB::table('teams_users')->where('team_id',$id)->get();
+        $users = DB::table('teams_users')
+            ->leftJoin('users', 'users.id', '=', 'teams_users.user_id')
+            ->where('team_id' , $id)->orderBy('users.id','ASC')
+            ->get();
+//        dd($users);
+//        $members = User::all('id')->whereIn('id',[$users->user_id]);
+////        dd($user);
+//        dd($members);
+//        $members = DB::table('users')->select('all')->where(['id',])->get();
+//        dd($members);
+        return view('admin.teams.members',[
+            'users'=>$users , 'id'=>$id
+        ]);
+    }
+    public function addmember($id){
+    //        $u = DB::table('users')->get() ;
+    //        dd($u);
+//        $users = DB::table('teams_users')
+//            ->leftJoin('users')
+//            ->leftJoin('users', 'users.id', '=', 'teams_users.user_id')
+//            ->where('team_id' ,'!=', $id)->orderBy('users.id','ASC')
+//            ->get();
+//        dd($id);
+//        $team_users = DB::table('teams_users')->select('user_id')->where('teams_users.team_id','=',$id)->get()->values();
+//
+//        dd($team_users);
+//        $users = DB::table('teams_users')
+//            ->leftJoin('users','teams_users.user_id' ,'!=','users.id')
+//            ->whereIn('users.id' , $gg)
+//            ->get();
+//        dd($users);
+//        dd($users);
+        $users = User::all();
+//        dd($users);
+        return view('admin.teams.addmember',[
+            'users'=>$users ,'team_id'=>$id
+        ]);
+    }
+    public function storemember($id ,$user_id)
+    {
+
+        $data=array('team_id'=>$id,"user_id"=>$user_id);
+        DB::table('teams_users')->insert($data);
+//        dd($this->$team_id);
+
+//        $team = New Team();
+//        $team->name = $request->name;
+//        $team->owner_id = $user_id;
+//        $team->save();
+        return redirect(route('teams.addmember',$id));
     }
 }

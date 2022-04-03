@@ -1,16 +1,17 @@
 @extends('layouts.admin')
 @section('content')
     <div class="text-center d-flex w-100">
-        <a href="{{ url(route('teams.create')) }}" class="w-100">
+        <a href="{{url(route('teams.addmember', $id))}}" class="w-100">
             <button class="btn btn-lg btn-success">
-                Add
+                Add Member
+            </button>
+        </a>
+        <a href="{{url(route('payments.create', $id))}}" class="w-100">
+            <button class="btn btn-lg btn-success">
+                Create Payment
             </button>
         </a>
     </div>
-
-
-
-
 
 
 
@@ -33,7 +34,7 @@
                             <tr>
                                 <th scope="col" class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Id</th>
                                 <th scope="col" class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
-                                <th scope="col" class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Owner_id</th>
+                                <th scope="col" class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
                                 <th scope="col" class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Created At</th>
                                 <th scope="col" class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Updated At</th>
 
@@ -43,48 +44,48 @@
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($teams as $team)
+                            @foreach($users as $user)
                                 <tr>
                                     <td class="align-middle text-center text-sm">
-                                        <span>{{ $team->id }}</span>
+                                        <span>{{ $user->id }}</span>
                                     </td>
 
                                     <td class="align-middle text-center text-sm">
-                                        <h6>{{ $team->name }}</h6>
+                                        <h6>{{ $user->name }}</h6>
                                     </td>
 
                                     <td class="align-middle text-center text-sm">
-                                        <span>{{ $team->owner_id }}</span>
+                                        <span>{{ $user->email }}</span>
                                     </td>
 
 
                                     <td class="align-middle text-center text-sm">
-                                        <h6 class="mb-0 text-sm">{{ $team->created_at }}</h6>
+                                        <h6 class="mb-0 text-sm">{{ $user->created_at }}</h6>
                                     </td>
 
 
                                     <td class="align-middle text-center">
-                                        <h6 class="mb-0 text-sm">{{ $team->updated_at }}</h6>
+                                        <h6 class="mb-0 text-sm">{{ $user->updated_at }}</h6>
                                     </td>
 
 
-                                    <!--                            <td class="align-middle">-->
+                                     <!--                            <td class="align-middle">-->
                                     <!--                                <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">-->
                                     <!--                                    Edit-->
                                     <!--                                </a>-->
                                     <!--                            </td>-->
                                     <td class="actions align-middle text-center">
-                                        <a href="{{url(route('teams.members', $team->id))}}">
-                                            <button class="btn btn-info">Info</button>
-                                        </a>
-                                        <a href="{{url(route('teams.edit', $team->id))}}">
-                                            <button class="btn btn-primary">Edit</button>
-                                        </a>
-                                        <form action="{{route('teams.destroy', $team->id)}}"method="post">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-danger">Delete</button>
-                                        </form>
+{{--                                        <a href="{{url(route('teams.members', $user->id))}}">--}}
+{{--                                            <button class="btn btn-info">Info</button>--}}
+{{--                                        </a>--}}
+{{--                                        <a href="{{url(route('teams.edit', $user->id))}}">--}}
+{{--                                            <button class="btn btn-primary">Edit</button>--}}
+{{--                                        </a>--}}
+{{--                                        <form action="{{route('teams.destroy', $user->id)}}"method="post">--}}
+{{--                                            @csrf--}}
+{{--                                            @method('DELETE')--}}
+{{--                                            <button class="btn btn-danger">Delete</button>--}}
+{{--                                        </form>--}}
                                     </td>
                                 </tr>
                             @endforeach
@@ -95,7 +96,5 @@
             </div>
         </div>
     </div>
-
-
 
 @endsection
